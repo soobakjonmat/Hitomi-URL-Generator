@@ -7,7 +7,9 @@ class Main {
     urlContainer;
     tagSelector;
     tagListNameInput;
+    saveConfirmText;
     createTagListBtn;
+    renameTagListBtn;
     saveTagListBtn;
     removeTagListBtn;
     constructor() {
@@ -24,12 +26,15 @@ class Main {
         this.urlContainer = document.getElementById("url-container");
         this.tagSelector = document.getElementById("tag-selector");
         this.tagListNameInput = document.getElementById("tag-list-name-input");
+        this.saveConfirmText = document.getElementById("save-confirm-text");
         this.createTagListBtn = document.getElementById("create-tag-list-btn");
+        this.renameTagListBtn = document.getElementById("rename-tag-list-btn");
         this.saveTagListBtn = document.getElementById("save-tag-list-btn");
         this.removeTagListBtn = document.getElementById("remove-tag-list-btn");
         this.generateBtn.addEventListener("click", this.generateURL.bind(this));
         this.tagSelector.addEventListener("change", this.loadTagList.bind(this));
         this.createTagListBtn.addEventListener("click", this.createTagList.bind(this));
+        this.renameTagListBtn.addEventListener("click", this.renameTagList.bind(this));
         this.saveTagListBtn.addEventListener("click", this.saveTagList.bind(this));
         this.removeTagListBtn.addEventListener("click", this.removeTagList.bind(this));
         this.appendTagOptions();
@@ -149,10 +154,15 @@ class Main {
         return JSON.parse(localStorage.getItem(this.localStorageName));
     }
     saveTagList() {
+        if (this.tagSelector.selectedIndex === -1) {
+            alert("There are no tag lists to save");
+            return;
+        }
         let localStorageData = this.getLocalStorageData();
         let tagListName = this.tagSelector.options[this.tagSelector.selectedIndex].value;
         localStorageData[tagListName] = this.getCurrTagList();
         localStorage.setItem(this.localStorageName, JSON.stringify(localStorageData));
+        this.saveConfirmText.innerHTML = tagListName + " was saved successfully";
     }
     loadTagList() {
         if (this.tagSelector.selectedIndex === -1) {
@@ -190,7 +200,7 @@ class Main {
     }
     removeTagList() {
         if (this.tagSelector.selectedIndex === -1) {
-            alert("There are no options to remove");
+            alert("There are no tag lists to remove");
             return;
         }
         let localStorageData = this.getLocalStorageData();
@@ -202,7 +212,7 @@ class Main {
     createTagList() {
         let tagListName = this.tagListNameInput.value;
         if (tagListName === "") {
-            alert("Please enter a tag name");
+            alert("Please enter a tag list name");
             return;
         }
         this.tagListNameInput.value = "";
@@ -213,6 +223,33 @@ class Main {
         option.innerHTML = tagListName;
         this.tagSelector.add(option);
         this.tagSelector.selectedIndex = this.tagSelector.length - 1;
+    }
+    renameTagList() {
+        // get new tag list name
+        let newTagListName = this.tagListNameInput.value;
+        if (newTagListName === "") {
+            alert("There are no tag lists to rename");
+            return;
+        }
+        // delete text in input
+        this.tagListNameInput.value = "";
+        // get old tag list name
+        let oldTagListName = this.tagSelector.options[this.tagSelector.selectedIndex].value;
+        let localStorageData = this.getLocalStorageData();
+        // set local storage data of old tag list to new tag list name
+        localStorageData[newTagListName] = localStorageData[oldTagListName];
+        // delete old tag list
+        delete localStorageData[oldTagListName];
+        // remove old tag list from options
+        this.tagSelector.remove(this.tagSelector.selectedIndex);
+        // add new tag list to options
+        let option = document.createElement("option");
+        option.innerHTML = newTagListName;
+        this.tagSelector.add(option);
+        // set selectedIndex to new tag list name
+        this.tagSelector.selectedIndex = this.tagSelector.length - 1;
+        // set local storage data
+        localStorage.setItem(this.localStorageName, JSON.stringify(localStorageData));
     }
 }
 window.onload = () => {

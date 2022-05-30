@@ -55,12 +55,6 @@ body {
     padding: 0.3em 2em;
 }
 
-
-.tag-list-control-btn {
-    width: 12em;
-    margin: 1em 0em;
-}
-
 #tag-list {
     float: left;
 }
@@ -86,6 +80,27 @@ body {
     justify-content:space-between;
 }
 
+#tag-list-control-container :nth-child(2) > div > button {
+    width: 12em;
+}
+
+#create-tag-list-btn {
+    margin: 1em 0em;
+}
+
+#rename-tag-list-btn {
+    margin: 0em 0em 1.4em 0em;
+}
+
+#remove-tag-list-btn {
+    margin: 1em 0em;
+}
+
+#tag-list-name-input {
+    margin: 1em 0em;
+}
+
 #tag-selector {
-    min-width: 10em;
+    min-width: 12em;
+    margin: 3em 0em;
 }
