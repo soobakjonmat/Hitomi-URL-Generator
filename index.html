@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Hitomi URL Generator</title>
+    </head>
+    <body>
+        <div id="tag-container">
+            <div class="tag-container">
+                <div class="tag-heading">Include</div>
+                <div class="tag-column-container" id="include">
+                <!--
+                    <div class="tag-column">
+                        <div>language</div>
+                        <textarea cols="1" rows="1"></textarea>
+                    </div>
+                    ...
+
+                 -->
+                </div>
+            </div>
+
+            <div class="tag-container">
+                <div class="tag-heading">Exclude</div>
+                <div class="tag-column-container" id="exclude"></div>
+            </div>
+        </div>
+
+        <div style="margin: 1em 1em; text-align: center;">
+            <div style="float: left">
+                <button id="generate-btn" type="button">Generate URL</button>
+            </div>
+            <div id="tag-list-control-container">
+                <div>
+                    <div>
+                        <input type="text" id="tag-list-name-input"></input>
+                    </div>
+                    <div>
+                        <select id="tag-selector">
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <button id="create-tag-list-btn" class="tag-list-control-btn">Create New Tag List</button>
+                    </div>
+                    <div>
+                        <button id="save-tag-list-btn" class="tag-list-control-btn">Save tag list</button>
+                    </div>
+                    <div>
+                        <button id="remove-tag-list-btn" class="tag-list-control-btn">Remove Tag List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br clear="all">
+        <div style="display: block; height: 200%;">
+            <ul id="url-container"></ul>
+        </div>
+    </body>
+    <script src="src/main.js" type="module"></script>
+</html>
