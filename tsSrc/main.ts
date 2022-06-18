@@ -5,7 +5,8 @@ class Main {
     tagTypes: string[]
     localStorageName: string
 
-    tagContainers: HTMLDivElement[]
+    includeTagTextAreas: HTMLTextAreaElement[]
+    excludeTagTextAreas: HTMLTextAreaElement[]
 
     generateBtn: HTMLButtonElement
     urlContainer: HTMLUListElement
@@ -28,10 +29,11 @@ class Main {
             this.initializeLocalStorage()
         }
 
-        this.tagContainers = [<HTMLDivElement> document.getElementById("include"), <HTMLDivElement> document.getElementById("exclude")]
+        this.includeTagTextAreas = []
+        this.excludeTagTextAreas = []
 
-        this.appendTagContainerHeadings(this.tagContainers[0])
-        this.appendTagContainerHeadings(this.tagContainers[1])
+        this.appendTagContainerHeadings(<HTMLDivElement> document.getElementById("include"))
+        this.appendTagContainerHeadings(<HTMLDivElement> document.getElementById("exclude"))
 
         this.generateBtn = <HTMLButtonElement> document.getElementById("generate-btn")
         this.urlContainer = <HTMLUListElement> document.getElementById("url-container")
@@ -85,40 +87,32 @@ class Main {
             tagColumn.appendChild(headerDiv)
             tagColumn.appendChild(tagTextArea)
             tagContainer.appendChild(tagColumn)
-        }
-    }
 
-
-    getURLParam(div: HTMLDivElement) : string {
-        let paramStr = ""
-        let tagColumn: HTMLDivElement
-        let tagType: string
-        let tagTextArea: HTMLTextAreaElement
-        for (let i = 0; i < div.children.length; i++) {
-            tagColumn = <HTMLDivElement>div.children[i]
-            tagType = this.tagTypes[i]
-            tagTextArea = <HTMLTextAreaElement>tagColumn.children[1]
-
-            if (div.id === "include") {
-                for (let tag of tagTextArea.value.split("\n")) {
-                    if (tag !== "") {
-                        paramStr += `${tagType}%3A${tag.replace(/\s/g, "_")}%20` //format: (-)TYPE + %3A + TAG + %20
-                    }
-                }
+            if (tagContainer.id === "include") {
+                this.includeTagTextAreas.push(tagTextArea)
             } else {
-                for (let tag of tagTextArea.value.split("\n")) {
-                    if (tag !== "") {
-                        paramStr += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20`
-                    }
-                }
+                this.excludeTagTextAreas.push(tagTextArea)
             }
         }
-        return paramStr
     }
 
     generateURL() {
-        let param = this.getURLParam(this.tagContainers[0]) + this.getURLParam(this.tagContainers[1])
-        let fullURL = this.baseURL + param
+        let paramStr = ""
+        let tagType: string
+        for (let i = 0; i < this.tagTypes.length; i++) {
+            tagType = this.tagTypes[i]
+            for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
+                if (tag !== "") {
+                    paramStr += `${tagType}%3A${tag.replace(/\s/g, "_")}%20` // format: TYPE + %3A + TAG + %20
+                }
+            }
+            for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
+                if (tag !== "") {
+                    paramStr += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20` // format: (-)TYPE + %3A + TAG + %20
+                }
+            }
+        }
+        let fullURL = this.baseURL + paramStr
         let link = document.createElement("a")
         link.href = fullURL
         link.target = "_blank"
@@ -145,38 +139,27 @@ class Main {
     getCurrTagList() {
         let includeTags: TagType = this.getEmptyTagType()
         let excludeTags: TagType = this.getEmptyTagType()
-
-        let tagColumn: HTMLDivElement
         let tagType: string
-        let tagTextArea: HTMLTextAreaElement
-        // include tags
-        for (let i = 0; i < this.tagContainers[0].children.length; i++) {
-            tagColumn = <HTMLDivElement>this.tagContainers[0].children[i]
-            tagType = this.tagTypes[i]
-            tagTextArea = <HTMLTextAreaElement>tagColumn.children[1]
 
-            let tagList: string[] = []
-            for (let tag of tagTextArea.value.split("\n")) {
+        for (let i = 0; i < this.tagTypes.length; i++) {
+            tagType = this.tagTypes[i]
+            let includeTagTypes: string[] = []
+            for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
                 if (tag !== "") {
-                    tagList.push(tag)
+                    includeTagTypes.push(tag)
                 }
             }
-            includeTags[tagType] = tagList
-        }
-        // exclude tags
-        for (let i = 0; i < this.tagContainers[1].children.length; i++) {
-            tagColumn = <HTMLDivElement>this.tagContainers[1].children[i]
-            tagType = this.tagTypes[i]
-            tagTextArea = <HTMLTextAreaElement>tagColumn.children[1]
+            includeTags[tagType] = includeTagTypes
 
-            let tagList: string[] = []
-            for (let tag of tagTextArea.value.split("\n")) {
+            let excludeTagTypes: string[] = []
+            for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
                 if (tag !== "") {
-                    tagList.push(tag)
+                    excludeTagTypes.push(tag)
                 }
             }
-            excludeTags[tagType] = tagList
+            excludeTags[tagType] = excludeTagTypes
         }
+
         return {includeTags, excludeTags}
     }
 
@@ -207,31 +190,31 @@ class Main {
 
         let tagTextArea : HTMLTextAreaElement
         let tagContent = ""
-        let tagTypeIdx = 0
+        let i: number
         let tagStrList : string[]
 
+        i = 0
         for (let key in includeTags) {
             tagContent = ""
-            tagTextArea = <HTMLTextAreaElement> this.tagContainers[0].children[tagTypeIdx].children[1]
+            tagTextArea = this.includeTagTextAreas[i]
             tagStrList = includeTags[key]
-            for (let i = 0; i < tagStrList.length; i++) {
-                tagContent += tagStrList[i] + "\n"
+            for (let j = 0; j < tagStrList.length; j++) {
+                tagContent += tagStrList[j] + "\n"
             }
             tagTextArea.value = tagContent
-            tagTypeIdx++
-
+            i++
         }
 
-        tagTypeIdx = 0
+        i = 0
         for (let key in excludeTags) {
             tagContent = ""
-            tagTextArea = <HTMLTextAreaElement> this.tagContainers[1].children[tagTypeIdx].children[1]
+            tagTextArea = <HTMLTextAreaElement> this.excludeTagTextAreas[i]
             tagStrList = excludeTags[key]
-            for (let i = 0; i < tagStrList.length; i++) {
-                tagContent += tagStrList[i] + "\n"
+            for (let j = 0; j < tagStrList.length; j++) {
+                tagContent += tagStrList[j] + "\n"
             }
             tagTextArea.value = tagContent
-            tagTypeIdx++
+            i++
         }
     }
 

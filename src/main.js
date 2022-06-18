@@ -2,7 +2,8 @@ class Main {
     baseURL;
     tagTypes;
     localStorageName;
-    tagContainers;
+    includeTagTextAreas;
+    excludeTagTextAreas;
     generateBtn;
     urlContainer;
     tagSelector;
@@ -19,9 +20,10 @@ class Main {
         if (localStorage.getItem(this.localStorageName) == null) {
             this.initializeLocalStorage();
         }
-        this.tagContainers = [document.getElementById("include"), document.getElementById("exclude")];
-        this.appendTagContainerHeadings(this.tagContainers[0]);
-        this.appendTagContainerHeadings(this.tagContainers[1]);
+        this.includeTagTextAreas = [];
+        this.excludeTagTextAreas = [];
+        this.appendTagContainerHeadings(document.getElementById("include"));
+        this.appendTagContainerHeadings(document.getElementById("exclude"));
         this.generateBtn = document.getElementById("generate-btn");
         this.urlContainer = document.getElementById("url-container");
         this.tagSelector = document.getElementById("tag-selector");
@@ -64,37 +66,31 @@ class Main {
             tagColumn.appendChild(headerDiv);
             tagColumn.appendChild(tagTextArea);
             tagContainer.appendChild(tagColumn);
-        }
-    }
-    getURLParam(div) {
-        let paramStr = "";
-        let tagColumn;
-        let tagType;
-        let tagTextArea;
-        for (let i = 0; i < div.children.length; i++) {
-            tagColumn = div.children[i];
-            tagType = this.tagTypes[i];
-            tagTextArea = tagColumn.children[1];
-            if (div.id === "include") {
-                for (let tag of tagTextArea.value.split("\n")) {
-                    if (tag !== "") {
-                        paramStr += `${tagType}%3A${tag.replace(/\s/g, "_")}%20`; //format: (-)TYPE + %3A + TAG + %20
-                    }
-                }
+            if (tagContainer.id === "include") {
+                this.includeTagTextAreas.push(tagTextArea);
             }
             else {
-                for (let tag of tagTextArea.value.split("\n")) {
-                    if (tag !== "") {
-                        paramStr += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20`;
-                    }
+                this.excludeTagTextAreas.push(tagTextArea);
+            }
+        }
+    }
+    generateURL() {
+        let paramStr = "";
+        let tagType;
+        for (let i = 0; i < this.tagTypes.length; i++) {
+            tagType = this.tagTypes[i];
+            for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
+                if (tag !== "") {
+                    paramStr += `${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: TYPE + %3A + TAG + %20
+                }
+            }
+            for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
+                if (tag !== "") {
+                    paramStr += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: (-)TYPE + %3A + TAG + %20
                 }
             }
         }
-        return paramStr;
-    }
-    generateURL() {
-        let param = this.getURLParam(this.tagContainers[0]) + this.getURLParam(this.tagContainers[1]);
-        let fullURL = this.baseURL + param;
+        let fullURL = this.baseURL + paramStr;
         let link = document.createElement("a");
         link.href = fullURL;
         link.target = "_blank";
@@ -119,34 +115,23 @@ class Main {
     getCurrTagList() {
         let includeTags = this.getEmptyTagType();
         let excludeTags = this.getEmptyTagType();
-        let tagColumn;
         let tagType;
-        let tagTextArea;
-        // include tags
-        for (let i = 0; i < this.tagContainers[0].children.length; i++) {
-            tagColumn = this.tagContainers[0].children[i];
+        for (let i = 0; i < this.tagTypes.length; i++) {
             tagType = this.tagTypes[i];
-            tagTextArea = tagColumn.children[1];
-            let tagList = [];
-            for (let tag of tagTextArea.value.split("\n")) {
+            let includeTagTypes = [];
+            for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
                 if (tag !== "") {
-                    tagList.push(tag);
+                    includeTagTypes.push(tag);
                 }
             }
-            includeTags[tagType] = tagList;
-        }
-        // exclude tags
-        for (let i = 0; i < this.tagContainers[1].children.length; i++) {
-            tagColumn = this.tagContainers[1].children[i];
-            tagType = this.tagTypes[i];
-            tagTextArea = tagColumn.children[1];
-            let tagList = [];
-            for (let tag of tagTextArea.value.split("\n")) {
+            includeTags[tagType] = includeTagTypes;
+            let excludeTagTypes = [];
+            for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
                 if (tag !== "") {
-                    tagList.push(tag);
+                    excludeTagTypes.push(tag);
                 }
             }
-            excludeTags[tagType] = tagList;
+            excludeTags[tagType] = excludeTagTypes;
         }
         return { includeTags, excludeTags };
     }
@@ -174,28 +159,29 @@ class Main {
         let excludeTags = tagList["excludeTags"];
         let tagTextArea;
         let tagContent = "";
-        let tagTypeIdx = 0;
+        let i;
         let tagStrList;
+        i = 0;
         for (let key in includeTags) {
             tagContent = "";
-            tagTextArea = this.tagContainers[0].children[tagTypeIdx].children[1];
+            tagTextArea = this.includeTagTextAreas[i];
             tagStrList = includeTags[key];
-            for (let i = 0; i < tagStrList.length; i++) {
-                tagContent += tagStrList[i] + "\n";
+            for (let j = 0; j < tagStrList.length; j++) {
+                tagContent += tagStrList[j] + "\n";
             }
             tagTextArea.value = tagContent;
-            tagTypeIdx++;
+            i++;
         }
-        tagTypeIdx = 0;
+        i = 0;
         for (let key in excludeTags) {
             tagContent = "";
-            tagTextArea = this.tagContainers[1].children[tagTypeIdx].children[1];
+            tagTextArea = this.excludeTagTextAreas[i];
             tagStrList = excludeTags[key];
-            for (let i = 0; i < tagStrList.length; i++) {
-                tagContent += tagStrList[i] + "\n";
+            for (let j = 0; j < tagStrList.length; j++) {
+                tagContent += tagStrList[j] + "\n";
             }
             tagTextArea.value = tagContent;
-            tagTypeIdx++;
+            i++;
         }
     }
     removeTagList() {
