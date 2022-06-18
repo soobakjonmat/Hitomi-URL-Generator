@@ -103,12 +103,12 @@ class Main {
             tagType = this.tagTypes[i]
             for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
                 if (tag.trim()) {
-                    param += `${tagType}%3A${tag.replace(/\s/g, "_")}%20` // format: TYPE + %3A + TAG + %20
+                    param += tagType + "%3A" + tag.replace(/\s/g, "_") + "%20" // format: TYPE + %3A + TAG + %20
                 }
             }
             for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
                 if (tag.trim()) {
-                    param += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20` // format: (-)TYPE + %3A + TAG + %20
+                    param += "-" + tagType + "%3A" + tag.replace(/\s/g, "_") + "%20" // format: - + TYPE + %3A + TAG + %20
                 }
             }
         }
