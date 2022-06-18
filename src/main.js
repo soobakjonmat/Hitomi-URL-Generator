@@ -75,22 +75,22 @@ class Main {
         }
     }
     generateURL() {
-        let paramStr = "";
+        let param = "";
         let tagType;
         for (let i = 0; i < this.tagTypes.length; i++) {
             tagType = this.tagTypes[i];
             for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
-                if (tag !== "") {
-                    paramStr += `${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: TYPE + %3A + TAG + %20
+                if (tag.trim()) {
+                    param += `${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: TYPE + %3A + TAG + %20
                 }
             }
             for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
-                if (tag !== "") {
-                    paramStr += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: (-)TYPE + %3A + TAG + %20
+                if (tag.trim()) {
+                    param += `-${tagType}%3A${tag.replace(/\s/g, "_")}%20`; // format: (-)TYPE + %3A + TAG + %20
                 }
             }
         }
-        let fullURL = this.baseURL + paramStr;
+        let fullURL = this.baseURL + param;
         let link = document.createElement("a");
         link.href = fullURL;
         link.target = "_blank";
@@ -120,14 +120,14 @@ class Main {
             tagType = this.tagTypes[i];
             let includeTagTypes = [];
             for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
-                if (tag !== "") {
+                if (tag.trim()) {
                     includeTagTypes.push(tag);
                 }
             }
             includeTags[tagType] = includeTagTypes;
             let excludeTagTypes = [];
             for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
-                if (tag !== "") {
+                if (tag.trim()) {
                     excludeTagTypes.push(tag);
                 }
             }
