@@ -59,7 +59,7 @@ class Main {
     }
 
     initializeLocalStorage() {
-        localStorage.setItem(this.localStorageName, '{"Default":{"includeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":[non-h_imageset]},"excludeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":[]}}}')
+        localStorage.setItem(this.localStorageName, '{"Default":{"includeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":["non-h_imageset"]},"excludeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":[]}}}')
     }
 
     appendTagOptions() {
