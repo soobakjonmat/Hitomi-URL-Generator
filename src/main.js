@@ -43,7 +43,7 @@ class Main {
         this.loadTagList();
     }
     initializeLocalStorage() {
-        localStorage.setItem(this.localStorageName, '{"Default":{"includeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":["non-h_imageset"]},"excludeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":[]}}}');
+        localStorage.setItem(this.localStorageName, '{"Default":{"includeTags":{"language":["chinese"],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":["non-h_imageset"]},"excludeTags":{"language":[],"female":[],"male":[],"artist":[],"character":[],"series":[],"type":[],"tag":[]}}}');
     }
     appendTagOptions() {
         let localStorageData = this.getLocalStorageData();
@@ -93,13 +93,51 @@ class Main {
             }
         }
         let fullURL = this.baseURL + param;
+        let list = document.createElement("li");
+        let container = document.createElement("div");
         let link = document.createElement("a");
         link.href = fullURL;
         link.target = "_blank";
-        link.innerHTML = fullURL;
-        let list = document.createElement("li");
-        list.appendChild(link);
+        link.innerText = this.getURLLinkText();
+        link.style.float = "left";
+        link.style.width = "80%";
+        container.appendChild(link);
+        let removeBtn = document.createElement("button");
+        removeBtn.innerText = "Remove";
+        removeBtn.style.float = "right";
+        removeBtn.onclick = () => {
+            removeBtn.parentElement.parentElement.remove();
+        };
+        container.appendChild(removeBtn);
+        list.appendChild(container);
         this.urlContainer.appendChild(list);
+    }
+    getURLLinkText() {
+        let linkText = "";
+        let tagTypeText = "";
+        for (let i = 0; i < this.tagTypes.length; i++) {
+            tagTypeText = this.tagTypes[i] + ": ";
+            linkText += tagTypeText;
+            for (let tag of this.includeTagTextAreas[i].value.split("\n")) {
+                tag = tag.trim();
+                if (tag) {
+                    linkText += tag + " ";
+                }
+            }
+            for (let tag of this.excludeTagTextAreas[i].value.split("\n")) {
+                tag = tag.trim();
+                if (tag) {
+                    linkText += "-" + tag + " ";
+                }
+            }
+            if (linkText.substring(linkText.length - tagTypeText.length) == tagTypeText) {
+                linkText = linkText.substring(0, linkText.length - tagTypeText.length);
+            }
+            else {
+                linkText += "\n";
+            }
+        }
+        return linkText;
     }
     getEmptyTagType() {
         let obj = {
