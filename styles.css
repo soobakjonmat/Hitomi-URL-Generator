@@ -74,7 +74,6 @@ body {
 }
 
 #tag-list-control-container {
-    float: right;
     width: 23%;
     display: flex;
     justify-content:space-between;

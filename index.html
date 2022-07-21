@@ -27,36 +27,37 @@
         </div>
 
         <div style="margin: 1em 1em; text-align: center;">
-            <div style="float: left">
+            <div style="float: left;;">
                 <button id="generate-btn" type="button">Generate URL</button>
-                <ul id="url-container" style="width: 200%; font-size: small; text-align: left;"></ul>
-            </div>
-            <div id="tag-list-control-container">
-                <div>
+                <div id="tag-list-control-container">
                     <div>
-                        <input type="text" id="tag-list-name-input" placeholder="Tag List Name"></input>
+                        <div>
+                            <input type="text" id="tag-list-name-input" placeholder="Tag List Name"></input>
+                        </div>
+                        <div>
+                            <select id="tag-selector">
+                            </select>
+                        </div>
+                        <div id="save-confirm-text"></div>
                     </div>
                     <div>
-                        <select id="tag-selector">
-                        </select>
+                        <div>
+                            <button id="create-tag-list-btn"">Create New Tag List</button>
+                        </div>
+                        <div>
+                            <button id="rename-tag-list-btn"">Rename Tag List</button>
+                        </div>
+                        <div>
+                            <button id="save-tag-list-btn"">Save Tag List</button>
+                        </div>
+                        <div>
+                            <button id="remove-tag-list-btn"">Remove Tag List</button>
+                        </div>
                     </div>
-                    <div id="save-confirm-text"></div>
                 </div>
-                <div>
-                    <div>
-                        <button id="create-tag-list-btn"">Create New Tag List</button>
-                    </div>
-                    <div>
-                        <button id="rename-tag-list-btn"">Rename Tag List</button>
-                    </div>
-                    <div>
-                        <button id="save-tag-list-btn"">Save Tag List</button>
-                    </div>
-                    <div>
-                        <button id="remove-tag-list-btn"">Remove Tag List</button>
-                    </div>
-                </div>
             </div>
+            <ul id="url-container" style="width: 60%; font-size: small; text-align: left; float: right"></ul>
+
         </div>
     </body>
     <script src="src/main.js" type="module"></script>
